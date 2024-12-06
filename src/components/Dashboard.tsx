@@ -17,6 +17,8 @@ import {
 export const Dashboard = () => {
   const { user, signOut } = useAuthStore();
   const [activeTab, setActiveTab] = useState('inicio');
+  const [newPost, setNewPost] = useState(''); // Estado para o texto da nova postagem
+  const [posts, setPosts] = useState<any[]>([]); // Estado para armazenar as postagens
 
   const notifications = [
     { id: 1, title: 'Novo tutorial de League of Legends disponível', time: '5min atrás' },
@@ -29,6 +31,20 @@ export const Dashboard = () => {
     { id: 2, name: 'Counter-Strike 2', hours: '1.8', progress: 60 },
     { id: 3, name: 'Valorant', hours: '3.2', progress: 90 },
   ];
+
+  // Função para criar uma nova postagem
+  const handleCreatePost = () => {
+    if (newPost.trim()) {
+      const post = {
+        id: posts.length + 1,
+        user: user?.email?.split('@')[0],
+        content: newPost,
+        time: new Date().toLocaleTimeString(),
+      };
+      setPosts([post, ...posts]);
+      setNewPost(''); // Limpar o campo após a postagem
+    }
+  };
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -78,6 +94,44 @@ export const Dashboard = () => {
           />
         </div>
 
+        {/* Formulário de Postagem */}
+        <div className="bg-gray-900 rounded-xl p-6 border border-gray-800 mb-8">
+          <h2 className="text-xl font-bold mb-4">Compartilhe algo com a comunidade</h2>
+          <textarea
+            className="w-full bg-gray-800 text-white border border-gray-700 rounded-lg p-4 mb-4 focus:outline-none focus:ring-2 focus:ring-purple-500"
+            placeholder="Escreva sua postagem..."
+            rows={4}
+            value={newPost}
+            onChange={(e) => setNewPost(e.target.value)}
+          />
+          <button
+            onClick={handleCreatePost}
+            className="bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-purple-600 transition-colors"
+          >
+            Postar
+          </button>
+        </div>
+
+        {/* Lista de Postagens */}
+        <div className="space-y-8">
+          {posts.length > 0 && (
+            <div className="bg-gray-900 rounded-xl p-6 border border-gray-800">
+              <h2 className="text-xl font-bold mb-4">Postagens Recentes</h2>
+              <div className="space-y-4">
+                {posts.map((post) => (
+                  <div key={post.id} className="border-b border-gray-800 last:border-0 pb-4 last:pb-0">
+                    <div className="flex items-center justify-between">
+                      <p className="font-semibold text-gray-200">{post.user}</p>
+                      <p className="text-sm text-gray-400">{post.time}</p>
+                    </div>
+                    <p className="text-gray-400 mt-2">{post.content}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
         {/* Grid Principal */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Coluna da Esquerda */}
@@ -115,61 +169,63 @@ export const Dashboard = () => {
                   <div key={game.id} className="flex items-center justify-between">
                     <div>
                       <h3 className="font-semibold">{game.name}</h3>
+                      <p className
                       <p className="text-sm text-gray-400">{game.hours}h jogadas</p>
+                      </div>
+                      <div className="w-32 bg-gray-800 rounded-full h-2">
+                        <div
+                          className="bg-purple-500 h-2 rounded-full"
+                          style={{ width: `${game.progress}%` }}
+                        />
+                      </div>
                     </div>
-                    <div className="w-32 bg-gray-800 rounded-full h-2">
-                      <div
-                        className="bg-purple-500 h-2 rounded-full"
-                        style={{ width: `${game.progress}%` }}
-                      />
-                    </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
-
-          {/* Coluna da Direita */}
-          <div className="space-y-8">
-            {/* Notificações */}
-            <div className="bg-gray-900 rounded-xl p-6 border border-gray-800">
-              <h2 className="text-xl font-bold mb-4">Notificações</h2>
-              <div className="space-y-4">
-                {notifications.map((notification) => (
-                  <div
-                    key={notification.id}
-                    className="border-b border-gray-800 last:border-0 pb-4 last:pb-0"
-                  >
-                    <p className="font-medium">{notification.title}</p>
-                    <p className="text-sm text-gray-400">{notification.time}</p>
-                  </div>
-                ))}
+  
+            {/* Coluna da Direita */}
+            <div className="space-y-8">
+              {/* Notificações */}
+              <div className="bg-gray-900 rounded-xl p-6 border border-gray-800">
+                <h2 className="text-xl font-bold mb-4">Notificações</h2>
+                <div className="space-y-4">
+                  {notifications.map((notification) => (
+                    <div
+                      key={notification.id}
+                      className="border-b border-gray-800 last:border-0 pb-4 last:pb-0"
+                    >
+                      <p className="font-medium">{notification.title}</p>
+                      <p className="text-sm text-gray-400">{notification.time}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
-
-            {/* Ações Rápidas */}
-            <div className="bg-gray-900 rounded-xl p-6 border border-gray-800">
-              <h2 className="text-xl font-bold mb-4">Ações Rápidas</h2>
-              <div className="grid grid-cols-2 gap-4">
-                {[
-                  { icon: <Gamepad2 className="w-5 h-5" />, title: 'Jogar' },
-                  { icon: <Users className="w-5 h-5" />, title: 'Amigos' },
-                  { icon: <MessageSquare className="w-5 h-5" />, title: 'Chat' },
-                  { icon: <Trophy className="w-5 h-5" />, title: 'Ranking' },
-                ].map((action, index) => (
-                  <button
-                    key={index}
-                    className="flex items-center justify-center gap-2 bg-gray-800 p-3 rounded-lg hover:bg-gray-700 transition-colors"
-                  >
-                    {action.icon}
-                    <span>{action.title}</span>
-                  </button>
-                ))}
+  
+              {/* Ações Rápidas */}
+              <div className="bg-gray-900 rounded-xl p-6 border border-gray-800">
+                <h2 className="text-xl font-bold mb-4">Ações Rápidas</h2>
+                <div className="grid grid-cols-2 gap-4">
+                  {[
+                    { icon: <Gamepad2 className="w-5 h-5" />, title: 'Jogar' },
+                    { icon: <Users className="w-5 h-5" />, title: 'Amigos' },
+                    { icon: <MessageSquare className="w-5 h-5" />, title: 'Chat' },
+                    { icon: <Trophy className="w-5 h-5" />, title: 'Ranking' },
+                  ].map((action, index) => (
+                    <button
+                      key={index}
+                      className="flex items-center justify-center gap-2 bg-gray-800 p-3 rounded-lg hover:bg-gray-700 transition-colors"
+                    >
+                      {action.icon}
+                      <span>{action.title}</span>
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  );
-};
+    );
+  };
+  
