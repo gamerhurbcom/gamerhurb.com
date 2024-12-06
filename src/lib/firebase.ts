@@ -3,12 +3,13 @@ import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_STORAGE_BUCKET",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyD8XDEw83Mm-aeL_eSR-PTZ15pxQT17Qds",
+  authDomain: "gamerhurb-2de0a.firebaseapp.com",
+  projectId: "gamerhurb-2de0a",
+  storageBucket: "gamerhurb-2de0a.firebasestorage.app",
+  messagingSenderId: "165035093135",
+  appId: "1:165035093135:web:f76650c64da50ea443d4fa",
+  measurementId: "G-S2CM7BXXTK"
 };
 
 const app = initializeApp(firebaseConfig);
